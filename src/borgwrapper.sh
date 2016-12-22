@@ -43,7 +43,7 @@ borg_prune () {
 }
 
 borg_verify () {
-    $BORG check --show-rc "${REPO}"
+    $BORG check --info "${REPO}"
 }
 
 borg_unlock () {
