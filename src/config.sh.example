@@ -1,0 +1,20 @@
+BORG="/usr/bin/borg"
+REPO="user@reposerver:/srv/borg/hostname"
+BORG_PASSPHRASE="longandcomplexpassphrase"
+PATHS=(
+    "/etc"
+    "/home"
+    "/root"
+    "/srv"
+    "/usr/local"
+    "/var/spool/cron/crontabs"
+)
+EXCLUDES=(
+    "sh:/home/**/.cache"
+    "/root/.cache"
+    "*.pyc"
+)
+KEEP_DAILY=31
+KEEP_WEEKLY=0
+KEEP_MONTHLY=24
+KEEP_YEARLY=5
