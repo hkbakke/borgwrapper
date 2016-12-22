@@ -18,8 +18,6 @@ borg_backup () {
         EXCLUDE_CMD+=( --exclude "$EXCLUDE" )
     done
 
-    # Backup all of /home and /var/www except a few
-    # excluded directories
     $BORG create --info --stats \
         --compression lz4 \
         --numeric-owner \
@@ -29,10 +27,9 @@ borg_backup () {
 }
 
 borg_prune () {
-    # Use the `prune` subcommand to maintain 7 daily, 4 weekly and 6 monthly
-    # archives of THIS machine. --prefix `hostname`- is very important to
-    # limit prune's operation to this machine's archives and not apply to
-    # other machine's archives also.
+    # Use --prefix to limit pruning to this hostname's archives only, just in
+    # case you for some reason use the same repository for several hosts (not
+    # recommended)
     $BORG prune --info --stats --list \
         --prefix "$(hostname)-" \
         --keep-daily=$KEEP_DAILY \
@@ -47,7 +44,7 @@ borg_verify () {
 }
 
 borg_unlock () {
-    # Use if borg backup is not shut down cleanly
+    # Use if borgbackup is not shut down cleanly and complains about lock files
     $BORG break-lock "${REPO}"
 }
 
