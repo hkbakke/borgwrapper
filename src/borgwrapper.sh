@@ -5,18 +5,18 @@ CONFIG="/etc/borgwrapper/config.sh"
 
 
 print_usage () {
-	echo "Usage: borgwrapper.sh MODE"
+    echo "Usage: borgwrapper.sh MODE"
     echo ""
     echo "arguments:"
     echo "    MODE          backup|verify|unlock"
 }
 
 borg_backup () {
-	EXCLUDE_CMD=()
+    EXCLUDE_CMD=()
 
-	for EXCLUDE in ${EXCLUDES[@]}; do
-		EXCLUDE_CMD+=( --exclude "$EXCLUDE" )
-	done
+    for EXCLUDE in ${EXCLUDES[@]}; do
+        EXCLUDE_CMD+=( --exclude "$EXCLUDE" )
+    done
 
     # Backup all of /home and /var/www except a few
     # excluded directories
