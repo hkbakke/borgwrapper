@@ -21,7 +21,7 @@ borg_backup () {
     $BORG create --info --stats \
         --compression lz4 \
         --numeric-owner \
-        "${REPO}"::"$(hostname)-$(date -u +'%Y%m%dT%H%M%SZ')" \
+        "${REPO}"::"{hostname}-$(date -u +'%Y%m%dT%H%M%SZ')" \
         ${PATHS[@]} \
         ${EXCLUDE_CMD[@]}
 }
@@ -31,7 +31,7 @@ borg_prune () {
     # case you for some reason use the same repository for several hosts (not
     # recommended)
     $BORG prune --info --stats --list \
-        --prefix "$(hostname)-" \
+        --prefix "{hostname}-" \
         --keep-daily=$KEEP_DAILY \
         --keep-weekly=$KEEP_WEEKLY \
         --keep-monthly=$KEEP_MONTHLY \
