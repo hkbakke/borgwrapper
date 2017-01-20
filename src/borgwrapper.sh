@@ -14,7 +14,7 @@ print_usage () {
 borg_backup () {
     EXCLUDE_CMD=()
 
-    for EXCLUDE in ${EXCLUDES[@]}; do
+    for EXCLUDE in "${EXCLUDES[@]}"; do
         EXCLUDE_CMD+=( --exclude "${EXCLUDE}" )
     done
 
@@ -22,8 +22,8 @@ borg_backup () {
         --compression lz4 \
         --numeric-owner \
         "${REPO}"::"{hostname}-$(date -u +'%Y%m%dT%H%M%SZ')" \
-        ${PATHS[@]} \
-        ${EXCLUDE_CMD[@]}
+        "${PATHS[@]}" \
+        "${EXCLUDE_CMD[@]}"
 }
 
 borg_prune () {
