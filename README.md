@@ -17,6 +17,9 @@ Example cron jobs:
     40 17 23 * * /usr/local/sbin/borgwrapper.sh verify
 
 # Usage
+## Initialize backup repo
+
+    (. /etc/borgwrapper/config.sh; export BORG_PASSPHRASE; borg init "$REPO")
 ## Backup
 
     borgwrapper.sh backup
