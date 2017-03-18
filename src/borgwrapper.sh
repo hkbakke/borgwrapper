@@ -8,7 +8,7 @@ print_usage () {
     echo "Usage: borgwrapper.sh MODE"
     echo ""
     echo "arguments:"
-    echo "    MODE          backup|verify|unlock"
+    echo "    MODE          init|backup|verify|unlock|exec"
 }
 
 borg_init () {
