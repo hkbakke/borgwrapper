@@ -5,7 +5,7 @@ CONFIG="/etc/borgwrapper/config.sh"
 
 
 print_usage () {
-    echo "Usage: borgwrapper.sh MODE"
+    echo "Usage: $(basename "${BASH_SOURCE[0]}") MODE"
     echo ""
     echo "arguments:"
     echo "    MODE          init|backup|verify|unlock|exec"
