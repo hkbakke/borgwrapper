@@ -15,7 +15,6 @@ borg_init () {
     ${BORG} init "${BORG_REPO}"
 }
 
-
 borg_backup () {
     EXCLUDE_CMD=()
 
@@ -57,6 +56,7 @@ borg_exec () {
     export BORG_REPO
     ${BORG} "$@"
 }
+
 
 source "${CONFIG}" || exit 1
 export BORG_PASSPHRASE
