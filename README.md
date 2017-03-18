@@ -56,12 +56,14 @@ some restrictions so it looks something like this:
 Use `exec <borg arguments>`. `BORG_REPO` is exported to the environment so use `::` when the repo
 argument is required.
 
-Example:
+Examples:
 
     borgwrapper exec mount :: /mnt
+    borgwrapper exec list
 ### Borg directly
 Run in subshell if you do not want the passphrase stored in the current shell after the command have exited.
 
 Examples:
 
     (. /etc/borgwrapper/config.sh; export BORG_PASSPHRASE; borg mount "$BORG_REPO" /mnt)
+    (. /etc/borgwrapper/config.sh; export BORG_PASSPHRASE; borg list "$BORG_REPO")
