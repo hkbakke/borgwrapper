@@ -72,7 +72,7 @@ elif [[ ${MODE} == "unlock" ]]; then
     borg_unlock
 elif [[ ${MODE} == "exec" ]]; then
     if [[ $# -le 1 ]]; then
-        echo "ERROR: No borg arguments given"
+        >&2 echo "ERROR: No borg arguments given"
         exit 1
     fi
 
