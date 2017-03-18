@@ -2,7 +2,7 @@
 Wrapper to simplify backups with borgbackup
 
 # Installation
-Put the script somewhere practical
+Put the [script](src/borgwrapper.sh) somewhere practical
 
     cp borgwrapper.sh /usr/local/bin/borgwrapper
     chown root. /usr/local/bin/borgwrapper
@@ -10,6 +10,7 @@ Put the script somewhere practical
 
 # Configuration
 By default borgwrapper expects the configuration to be located at `/etc/borgwrapper/config.sh`.
+A example configuration file is included in [config.sh.example](src/config.sh.example)
 Ensure restrictive permissions on this file as it exposes the passphrase.
 
     chown root. config.sh
