@@ -11,6 +11,11 @@ print_usage () {
     echo "    MODE          backup|verify|unlock"
 }
 
+borg_init () {
+    ${BORG} init "${BORG_REPO}"
+}
+
+
 borg_backup () {
     EXCLUDE_CMD=()
 
@@ -21,7 +26,7 @@ borg_backup () {
     ${BORG} create --info --stats \
         --compression lz4 \
         --numeric-owner \
-        "${REPO}"::"{hostname}-$(date -u +'%Y%m%dT%H%M%SZ')" \
+        "${BORG_REPO}"::"{hostname}-$(date -u +'%Y%m%dT%H%M%SZ')" \
         "${PATHS[@]}" \
         "${EXCLUDE_CMD[@]}"
 }
@@ -36,29 +41,43 @@ borg_prune () {
         --keep-weekly=${KEEP_WEEKLY} \
         --keep-monthly=${KEEP_MONTHLY} \
         --keep-yearly=${KEEP_YEARLY} \
-        "${REPO}"
+        "${BORG_REPO}"
 }
 
 borg_verify () {
-    ${BORG} check --info "${REPO}"
+    ${BORG} check --info "${BORG_REPO}"
 }
 
 borg_unlock () {
     # Use if borgbackup is not shut down cleanly and complains about lock files
-    ${BORG} break-lock "${REPO}"
+    ${BORG} break-lock "${BORG_REPO}"
 }
 
+borg_exec () {
+    export BORG_REPO
+    ${BORG} "$@"
+}
 
 source "${CONFIG}" || exit 1
 export BORG_PASSPHRASE
 
-if [[ ${MODE} == "backup" ]]; then
+if [[ ${MODE} == "init" ]]; then
+    borg_init
+elif [[ ${MODE} == "backup" ]]; then
     borg_backup
     borg_prune
 elif [[ ${MODE} == "verify" ]]; then
     borg_verify
 elif [[ ${MODE} == "unlock" ]]; then
     borg_unlock
+elif [[ ${MODE} == "exec" ]]; then
+    if [[ $# -le 1 ]]; then
+        echo "ERROR: No borg arguments given"
+        exit 1
+    fi
+
+    shift
+    borg_exec "$@"
 else
     print_usage
 fi

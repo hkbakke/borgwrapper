@@ -1,5 +1,5 @@
 BORG="/usr/bin/borg"
-REPO="user@reposerver:/srv/borg/$(hostname -f)"
+BORG_REPO="user@reposerver:/srv/borg/$(hostname -f)"
 BORG_PASSPHRASE="longandcomplexpassphrase"
 PATHS=(
     "/etc"
