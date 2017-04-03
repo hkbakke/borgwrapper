@@ -1,14 +1,23 @@
 #!/bin/bash
 
-MODE="${1}"
-CONFIG="/etc/borgwrapper/config.sh"
-
+error_handler () {
+    local SCRIPT_NAME="$0"
+    local LINE="$1"
+    local EXIT_CODE="$2"
+    echo "${SCRIPT_NAME}: Error in line ${LINE} (exit code ${EXIT_CODE})"
+    exit ${EXIT_CODE}
+}
 
 print_usage () {
-    echo "Usage: $(basename "${BASH_SOURCE[0]}") MODE"
-    echo ""
-    echo "arguments:"
-    echo "    MODE          init|backup|verify|unlock|exec"
+    cat << EOF
+Usage: $(basename "${BASH_SOURCE[0]}") [OPTIONS] MODE
+
+OPTIONS
+    -c CONFIG_FILE
+
+MODES
+    init|backup|verify|unlock|exec
+EOF
 }
 
 borg_init () {
@@ -58,6 +67,28 @@ borg_exec () {
 }
 
 
+trap 'error_handler ${LINENO} $?' ERR INT TERM
+set -o errtrace -o pipefail
+
+
+# Default parameters
+CONFIG="/etc/borgwrapper/config.sh"
+
+while getopts ":c:" OPT; do
+    case ${OPT} in
+        c)
+            CONFIG="${OPTARG}"
+            ;;
+        *)
+            print_usage
+            exit 1
+    esac
+done
+
+# Interpret all remaining arguments as mode parameters
+shift "$((OPTIND - 1))"
+MODE="${1}"
+
 source "${CONFIG}" || exit 1
 export BORG_PASSPHRASE
 
@@ -80,4 +111,8 @@ elif [[ ${MODE} == "exec" ]]; then
     borg_exec "$@"
 else
     print_usage
+    exit 1
 fi
+
+
+trap - ERR INT TERM
