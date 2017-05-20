@@ -35,5 +35,5 @@ KEEP_YEARLY=5
 #    --list
 #)
 #BORG_CHECK_ARGS=(
-#   --info
+#    --info
 #)
