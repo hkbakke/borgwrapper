@@ -18,3 +18,22 @@ KEEP_DAILY=31
 KEEP_WEEKLY=0
 KEEP_MONTHLY=24
 KEEP_YEARLY=5
+
+# Optional arguments to the different borg commands.
+# The current default values are listed. Modify if needed.
+#BORG_BACKUP_ARGS=(
+#    --info
+#    --stats
+#    --list
+#    --filter AME
+#    --compression lz4
+#    --numeric-owner
+#)
+#BORG_PRUNE_ARGS=(
+#    --info
+#    --stats
+#    --list
+#)
+#BORG_CHECK_ARGS=(
+#   --info
+#)

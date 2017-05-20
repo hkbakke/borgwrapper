@@ -31,9 +31,19 @@ borg_backup () {
         EXCLUDE_CMD+=( --exclude "${EXCLUDE}" )
     done
 
-    ${BORG} create --info --stats --list --filter AME \
-        --compression lz4 \
-        --numeric-owner \
+    if [[ -z ${BORG_BACKUP_ARGS[@]} ]]; then
+        BORG_BACKUP_ARGS=(
+            --info
+            --stats
+            --list
+            --filter AME
+            --compression lz4
+            --numeric-owner
+        )
+    fi
+
+    ${BORG} create \
+        "${BORG_BACKUP_ARGS[@]}" \
         "${BORG_REPO}"::"{hostname}-$(date -u +'%Y%m%dT%H%M%SZ')" \
         "${PATHS[@]}" \
         "${EXCLUDE_CMD[@]}"
@@ -43,7 +53,17 @@ borg_prune () {
     # Use --prefix to limit pruning to this hostname's archives only, just in
     # case you for some reason use the same repository for several hosts (not
     # recommended)
-    ${BORG} prune --info --stats --list \
+
+    if [[ -z ${BORG_PRUNE_ARGS[@]} ]]; then
+        BORG_PRUNE_ARGS=(
+            --info
+            --stats
+            --list
+        )
+    fi
+
+    ${BORG} prune \
+        "${BORG_PRUNE_ARGS[@]}" \
         --prefix "{hostname}-" \
         --keep-daily=${KEEP_DAILY} \
         --keep-weekly=${KEEP_WEEKLY} \
@@ -53,7 +73,13 @@ borg_prune () {
 }
 
 borg_verify () {
-    ${BORG} check --info "${BORG_REPO}"
+    if [[ -z ${BORG_CHECK_ARGS[@]} ]]; then
+        BORG_CHECK_ARGS=(
+            --info
+        )
+    fi
+
+    ${BORG} check "${BORG_CHECK_ARGS[@]}" "${BORG_REPO}"
 }
 
 borg_unlock () {
