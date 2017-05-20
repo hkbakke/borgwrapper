@@ -31,7 +31,7 @@ borg_backup () {
         EXCLUDE_CMD+=( --exclude "${EXCLUDE}" )
     done
 
-    ${BORG} create --info --stats \
+    ${BORG} create --info --stats --list --filter AME \
         --compression lz4 \
         --numeric-owner \
         "${BORG_REPO}"::"{hostname}-$(date -u +'%Y%m%dT%H%M%SZ')" \
