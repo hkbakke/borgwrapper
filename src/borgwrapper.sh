@@ -1,13 +1,5 @@
 #!/bin/bash
 
-error_handler () {
-    local SCRIPT_NAME="$0"
-    local LINE="$1"
-    local EXIT_CODE="$2"
-    echo "${SCRIPT_NAME}: Error in line ${LINE} (exit code ${EXIT_CODE})"
-    exit ${EXIT_CODE}
-}
-
 print_usage () {
     cat << EOF
 Usage: $(basename "${BASH_SOURCE[0]}") [OPTIONS] MODE
@@ -18,6 +10,14 @@ OPTIONS
 MODES
     init|backup|verify|unlock|exec
 EOF
+}
+
+error_handler () {
+    local SCRIPT_NAME="$0"
+    local LINE="$1"
+    local EXIT_CODE="$2"
+    >&2 echo "${SCRIPT_NAME}: Error in line ${LINE} (exit code ${EXIT_CODE})"
+    exit ${EXIT_CODE}
 }
 
 borg_init () {
@@ -120,16 +120,18 @@ exit_verify () {
     exit_clean $1
 }
 
+lock_failed () {
+    >&2 echo "$0 is already running"
+    exit 1
+}
+
 exit_clean () {
     trap - ERR INT TERM
     exit $1
 }
 
 
-trap 'error_handler ${LINENO} $?' ERR INT TERM
-set -o errtrace -o pipefail
-
-# Default options
+# Default parameters
 CONFIG="/etc/borgwrapper/config.sh"
 LOCKFILE="/var/lock/borgwrapper.lock"
 BORG="/usr/bin/borg"
@@ -152,37 +154,45 @@ done
 shift "$((OPTIND - 1))"
 MODE="${1}"
 
+
+echo "Loading config from ${CONFIG}"
 source "${CONFIG}" || exit 1
 export BORG_PASSPHRASE
 
-# Ensure this is the only instance of borgwrapper running
-[[ "${FLOCKER}" != "$0" ]] && exec env FLOCKER="$0" flock -en "${LOCKFILE}" "$0" "$@" || true
+(
+    # Ensure this is the only instance running
+    flock -n 9 || lock_failed
 
-if [[ ${MODE} == "init" ]]; then
-    borg_init
-elif [[ ${MODE} == "backup" ]]; then
-    trap 'exit_backup $?' ERR INT TERM
-    pre_backup_cmd
-    borg_backup
-    borg_prune
-    exit_backup 0
-elif [[ ${MODE} == "verify" ]]; then
-    trap 'exit_verify $?' ERR INT TERM
-    borg_verify
-    exit_verify 0
-elif [[ ${MODE} == "unlock" ]]; then
-    borg_unlock
-elif [[ ${MODE} == "exec" ]]; then
-    if [[ $# -le 1 ]]; then
-        >&2 echo "ERROR: No borg arguments given"
+    # The error handler trap must be set within the subshell to be effective
+    trap 'error_handler ${LINENO} $?' ERR INT TERM
+    set -o errtrace -o pipefail
+
+    if [[ ${MODE} == "init" ]]; then
+        borg_init
+    elif [[ ${MODE} == "backup" ]]; then
+        trap 'exit_backup $?' ERR INT TERM
+        pre_backup_cmd
+        borg_backup
+        borg_prune
+        exit_backup 0
+    elif [[ ${MODE} == "verify" ]]; then
+        trap 'exit_verify $?' ERR INT TERM
+        borg_verify
+        exit_verify 0
+    elif [[ ${MODE} == "unlock" ]]; then
+        borg_unlock
+    elif [[ ${MODE} == "exec" ]]; then
+        if [[ $# -le 1 ]]; then
+            >&2 echo "ERROR: No borg arguments given"
+            exit 1
+        fi
+
+        shift
+        borg_exec "$@"
+    else
+        print_usage
         exit 1
     fi
 
-    shift
-    borg_exec "$@"
-else
-    print_usage
-    exit 1
-fi
-
-exit_clean 0
+    exit_clean 0
+) 9>${LOCKFILE}
