@@ -92,12 +92,44 @@ borg_exec () {
     ${BORG} "$@"
 }
 
+pre_backup_cmd () {
+    [[ -n ${PRE_BACKUP_CMD} ]] || return
+    echo "Running pre backup command: ${PRE_BACKUP_CMD[@]}"
+    "${PRE_BACKUP_CMD[@]}"
+}
+
+post_backup_cmd () {
+    [[ -n ${POST_BACKUP_CMD} ]] || return
+    echo "Running post backup command: ${POST_BACKUP_CMD[@]}"
+    "${POST_BACKUP_CMD[@]}"
+}
+
+post_verify_cmd () {
+    [[ -n ${POST_VERIFY_CMD} ]] || return
+    echo "Running post verify command: ${POST_VERIFY_CMD[@]}"
+    "${POST_VERIFY_CMD[@]}"
+}
+
+exit_backup () {
+    post_backup_cmd
+    exit_clean $1
+}
+
+exit_verify () {
+    post_verify_cmd
+    exit_clean $1
+}
+
+exit_clean () {
+    trap - ERR INT TERM
+    exit $1
+}
+
 
 trap 'error_handler ${LINENO} $?' ERR INT TERM
 set -o errtrace -o pipefail
 
-
-# Default parameters
+# Default options
 CONFIG="/etc/borgwrapper/config.sh"
 
 while getopts ":c:" OPT; do
@@ -118,13 +150,25 @@ MODE="${1}"
 source "${CONFIG}" || exit 1
 export BORG_PASSPHRASE
 
+# Global defaults
+[[ -z ${LOCKFILE} ]] && LOCKFILE="/var/lock/borgwrapper.lock"
+[[ -z ${BORG} ]] && BORG="/usr/bin/borg"
+
+# Ensure this is the only instance of borgwrapper running
+[[ "${FLOCKER}" != "$0" ]] && exec env FLOCKER="$0" flock -en "${LOCKFILE}" "$0" "$@" || true
+
 if [[ ${MODE} == "init" ]]; then
     borg_init
 elif [[ ${MODE} == "backup" ]]; then
+    trap 'exit_backup $?' ERR INT TERM
+    pre_backup_cmd
     borg_backup
     borg_prune
+    exit_backup 0
 elif [[ ${MODE} == "verify" ]]; then
+    trap 'exit_verify $?' ERR INT TERM
     borg_verify
+    exit_verify 0
 elif [[ ${MODE} == "unlock" ]]; then
     borg_unlock
 elif [[ ${MODE} == "exec" ]]; then
@@ -140,5 +184,4 @@ else
     exit 1
 fi
 
-
-trap - ERR INT TERM
+exit_clean 0

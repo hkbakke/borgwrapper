@@ -1,4 +1,4 @@
-BORG="/usr/bin/borg"
+#BORG="/usr/bin/borg"
 BORG_REPO="user@reposerver:/srv/borg/$(hostname -f)"
 BORG_PASSPHRASE="longandcomplexpassphrase"
 PATHS=(
@@ -18,6 +18,20 @@ KEEP_DAILY=31
 KEEP_WEEKLY=0
 KEEP_MONTHLY=24
 KEEP_YEARLY=5
+
+#LOCKFILE="/var/lock/borgwrapper.lock"
+
+# Command to execute before backup, e.g., taking a ZFS snapshot. Must return successfully
+# for backup to start. POST_BACKUP_CMD is executed even if this fails.
+#PRE_BACKUP_CMD=()
+
+# Command to execute after backup, e.g., removing a snapshot or sending a report somewhere.
+# This command is executed regardless of backup success.
+#POST_BACKUP_CMD=()
+
+# Command to execute after verification.
+# This command is executed regardless of verification success.
+#POST_VERIFY_CMD=()
 
 # Optional arguments to the different borg commands.
 # The current default values are listed. Modify if needed.
