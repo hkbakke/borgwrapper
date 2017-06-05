@@ -50,10 +50,6 @@ borg_backup () {
 }
 
 borg_prune () {
-    # Use --prefix to limit pruning to this hostname's archives only, just in
-    # case you for some reason use the same repository for several hosts (not
-    # recommended)
-
     if [[ -z ${BORG_PRUNE_ARGS[@]} ]]; then
         BORG_PRUNE_ARGS=(
             --info
