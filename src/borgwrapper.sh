@@ -38,7 +38,6 @@ borg_backup () {
             --list
             --filter AME
             --compression lz4
-            --numeric-owner
         )
     fi
 

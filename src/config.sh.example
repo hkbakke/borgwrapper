@@ -41,7 +41,6 @@ KEEP_YEARLY=5
 #    --list
 #    --filter AME
 #    --compression lz4
-#    --numeric-owner
 #)
 #BORG_PRUNE_ARGS=(
 #    --info
