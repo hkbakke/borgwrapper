@@ -22,6 +22,8 @@ KEEP_WEEKLY=0
 KEEP_MONTHLY=24
 KEEP_YEARLY=5
 
+# Change this if you need to have multiple borgwrapper instances running
+# using different configs.
 #LOCKFILE="/var/lock/borgwrapper.lock"
 
 # Command to execute before backup, e.g., taking a ZFS snapshot. Must return successfully
