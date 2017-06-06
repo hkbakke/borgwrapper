@@ -1,5 +1,8 @@
 #BORG="/usr/bin/borg"
-BORG_REPO="user@reposerver:/srv/borg/$(hostname -f)"
+BORG_REPO="<user>@<reposerver>:/srv/borg/$(hostname -f)"
+
+# If using a non-standard SSH port ssh:// have to be specified (per borg v1.0.9)
+#BORG_REPO="ssh://<user>@<reposerver>:<ssh_port>/srv/borg/$(hostname -f)"
 BORG_PASSPHRASE="longandcomplexpassphrase"
 PATHS=(
     "/etc"
