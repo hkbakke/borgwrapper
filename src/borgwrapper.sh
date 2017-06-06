@@ -176,9 +176,7 @@ export BORG_PASSPHRASE
     trap 'error_handler ${LINENO} $?' ERR INT TERM
     set -o errtrace -o pipefail
 
-    if [[ ${BWLIMIT} -gt 0 ]]; then
-        limit_bw
-    fi
+    [[ ${BWLIMIT} -gt 0 ]] && limit_bw
 
     if [[ ${MODE} == "init" ]]; then
         borg_init
