@@ -22,6 +22,10 @@ KEEP_WEEKLY=0
 KEEP_MONTHLY=24
 KEEP_YEARLY=5
 
+# Limit bandwith used when backing up to SSH repositories. Requires the utility `pv`.
+# The unit is bytes per second. 0 means no limit.
+#BWLIMIT=0
+
 # Change this if you need to have multiple borgwrapper instances running
 # using different configs.
 #LOCKFILE="/var/lock/borgwrapper.lock"

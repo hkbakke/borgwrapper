@@ -87,6 +87,19 @@ borg_exec () {
     ${BORG} "$@"
 }
 
+limit_bw () {
+    if ! [[ -x $(command -v pv) ]]; then
+        >&2 echo "WARNING: BWLIMIT is enabled, but the utility 'pv' is not available. Continuing without bandwith limitation."
+        return 0
+    fi
+
+    export PV_WRAPPER=$(mktemp)
+    chmod +x ${PV_WRAPPER}
+    echo -e '#!/bin/bash\npv -q -L ${BWLIMIT} | "$@"' > ${PV_WRAPPER}
+    export BWLIMIT
+    export BORG_RSH="${PV_WRAPPER} ssh"
+}
+
 pre_backup_cmd () {
     [[ -n ${PRE_BACKUP_CMD} ]] || return 0
     echo "Running pre backup command: ${PRE_BACKUP_CMD[@]}"
@@ -121,6 +134,7 @@ lock_failed () {
 }
 
 exit_clean () {
+    [[ -n ${PV_WRAPPER} ]] && rm -f ${PV_WRAPPER}
     trap - ERR INT TERM
     exit $1
 }
@@ -161,6 +175,10 @@ export BORG_PASSPHRASE
     # The error handler trap must be set within the subshell to be effective
     trap 'error_handler ${LINENO} $?' ERR INT TERM
     set -o errtrace -o pipefail
+
+    if [[ ${BWLIMIT} -gt 0 ]]; then
+        limit_bw
+    fi
 
     if [[ ${MODE} == "init" ]]; then
         borg_init
