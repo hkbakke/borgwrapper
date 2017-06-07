@@ -23,7 +23,8 @@ KEEP_MONTHLY=24
 KEEP_YEARLY=5
 
 # Limit bandwith used when backing up to SSH repositories. Requires the utility `pv`.
-# The unit is bytes per second. 0 means no limit.
+# The unit is bytes per second. 0 means no limit. The numeric part must be an integer value.
+# You can use K, M, G or T binary prefixes (power of 1024), e.g., 5M = 5MiB/s = 5242880 bytes/s.
 #BWLIMIT=0
 
 # Change this if you need to have multiple borgwrapper instances running

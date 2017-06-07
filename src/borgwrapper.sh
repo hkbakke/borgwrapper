@@ -87,6 +87,34 @@ borg_exec () {
     ${BORG} "$@"
 }
 
+convert_rate () {
+    # Takes the rate in bytes as argument
+    local IN_RATE=${1}
+    local RATE=0
+    local B_REGEX="^([0-9]+)$"
+    local KIB_REGEX="^([0-9]+)K$"
+    local MIB_REGEX="^([0-9]+)M$"
+    local GIB_REGEX="^([0-9]+)G$"
+    local TIB_REGEX="^([0-9]+)T$"
+
+    if [[ ${IN_RATE} =~ ${TIB_REGEX} ]]; then
+        RATE=$(( ${BASH_REMATCH[1]} * 1024**4 ))
+    elif [[ ${IN_RATE} =~ ${GIB_REGEX} ]]; then
+        RATE=$(( ${BASH_REMATCH[1]} * 1024**3 ))
+    elif [[ ${IN_RATE} =~ ${MIB_REGEX} ]]; then
+        RATE=$(( ${BASH_REMATCH[1]} * 1024**2 ))
+    elif [[ ${IN_RATE} =~ ${KIB_REGEX} ]]; then
+        RATE=$(( ${BASH_REMATCH[1]} * 1024 ))
+    elif [[ ${IN_RATE} =~ ${B_REGEX} ]]; then
+        RATE=${BASH_REMATCH[1]}
+    else
+        >&2 echo "${IN_RATE} is not a valid rate"
+        false
+    fi
+
+    echo ${RATE}
+}
+
 limit_bw () {
     if ! [[ -x $(command -v pv) ]]; then
         >&2 echo "WARNING: BWLIMIT is enabled, but the utility 'pv' is not available. Continuing without bandwith limitation."
@@ -94,10 +122,11 @@ limit_bw () {
     fi
 
     export PV_WRAPPER=$(mktemp)
+    export RATE_LIMIT=$(convert_rate ${BWLIMIT})
     chmod +x ${PV_WRAPPER}
-    echo -e '#!/bin/bash\npv -q -L ${BWLIMIT} | "$@"' > ${PV_WRAPPER}
-    export BWLIMIT
+    echo -e '#!/bin/bash\npv -q -L ${RATE_LIMIT} | "$@"' > ${PV_WRAPPER}
     export BORG_RSH="${PV_WRAPPER} ssh"
+    echo "Limiting bandwith to ${RATE_LIMIT} bytes/s"
 }
 
 pre_backup_cmd () {
@@ -147,6 +176,7 @@ BORG="/usr/bin/borg"
 PRE_BACKUP_CMD=()
 POST_BACKUP_CMD=()
 POST_VERIFY_CMD=()
+BWLIMIT=0
 
 while getopts ":c:" OPT; do
     case ${OPT} in
@@ -176,7 +206,8 @@ export BORG_PASSPHRASE
     trap 'error_handler ${LINENO} $?' ERR INT TERM
     set -o errtrace -o pipefail
 
-    [[ ${BWLIMIT} -gt 0 ]] && limit_bw
+    # Enforce bandwidth limit if set
+    [[ -n ${BWLIMIT} ]] && [[ ${BWLIMIT} != "0" ]] && limit_bw
 
     if [[ ${MODE} == "init" ]]; then
         borg_init
