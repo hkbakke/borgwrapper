@@ -164,6 +164,7 @@ lock_failed () {
 
 exit_clean () {
     [[ -n ${PV_WRAPPER} ]] && rm -f ${PV_WRAPPER}
+    [[ -n ${LOCKFILE} ]] && rm -f "${LOCKFILE}"
     trap - ERR INT TERM
     exit $1
 }
