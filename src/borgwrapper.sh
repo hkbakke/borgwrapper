@@ -88,7 +88,7 @@ borg_exec () {
 }
 
 convert_rate () {
-    # Takes the rate in bytes as argument
+    # Convert IN_RATE to bytes
     local IN_RATE=${1}
     local RATE=0
     local B_REGEX="^([0-9]+)$"
@@ -117,7 +117,7 @@ convert_rate () {
 
 limit_bw () {
     if ! [[ -x $(command -v pv) ]]; then
-        >&2 echo "WARNING: BWLIMIT is enabled, but the utility 'pv' is not available. Continuing without bandwith limitation."
+        >&2 echo "WARNING: BWLIMIT is enabled, but the utility 'pv' is not available. Continuing without bandwidth limitation."
         return 0
     fi
 
