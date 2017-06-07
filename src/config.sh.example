@@ -27,9 +27,8 @@ KEEP_YEARLY=5
 # You can use K, M, G or T binary prefixes (power of 1024), e.g., 5M = 5MiB/s = 5242880 bytes/s.
 #BWLIMIT=0
 
-# Change this if you need to have multiple borgwrapper instances running
-# using different configs.
-#LOCKFILE="/var/lock/borgwrapper.lock"
+# Location of borgwrapper lock files
+#LOCKDIR="/run/lock/borgwrapper"
 
 # Command to execute before backup, e.g., taking a ZFS snapshot. Must return successfully
 # for backup to start. POST_BACKUP_CMD is executed even if this fails.

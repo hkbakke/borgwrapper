@@ -171,8 +171,8 @@ exit_clean () {
 
 # Default parameters
 CONFIG="/etc/borgwrapper/config.sh"
-LOCKFILE="/var/lock/borgwrapper.lock"
 BORG="/usr/bin/borg"
+LOCKDIR="/run/lock/borgwrapper"
 PRE_BACKUP_CMD=()
 POST_BACKUP_CMD=()
 POST_VERIFY_CMD=()
@@ -197,6 +197,9 @@ MODE="${1}"
 echo "Loading config from ${CONFIG}"
 source "${CONFIG}" || exit 1
 export BORG_PASSPHRASE
+
+LOCKFILE="${LOCKDIR}/$(echo -n "${BORG_REPO}" | md5sum | cut -d ' ' -f 1).lock"
+mkdir -p "${LOCKDIR}"
 
 (
     # Ensure this is the only instance running
@@ -237,4 +240,4 @@ export BORG_PASSPHRASE
     fi
 
     exit_clean 0
-) 9>${LOCKFILE}
+) 9>"${LOCKFILE}"
