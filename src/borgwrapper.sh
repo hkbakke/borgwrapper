@@ -8,7 +8,7 @@ OPTIONS
     -c CONFIG_FILE
 
 MODES
-    init|backup|verify|unlock|exec
+    init|backup|verify|unlock|delete-checkpoints|exec
 EOF
 }
 
@@ -75,6 +75,14 @@ borg_verify () {
     fi
 
     ${BORG} check "${BORG_CHECK_ARGS[@]}" "${BORG_REPO}"
+}
+
+borg_delete_checkpoints () {
+    ${BORG} list "${BORG_REPO}" \
+        | { grep .checkpoint || true; } \
+        | cut -d ' ' -f 1 \
+        | xargs -I % -n 1 --no-run-if-empty \
+        ${BORG} delete "${BORG_REPO}"::%
 }
 
 borg_unlock () {
@@ -225,6 +233,8 @@ mkdir -p "${LOCKDIR}"
         trap 'exit_verify $?' ERR INT TERM
         borg_verify
         exit_verify 0
+    elif [[ ${MODE} == "delete-checkpoints" ]]; then
+        borg_delete_checkpoints
     elif [[ ${MODE} == "unlock" ]]; then
         borg_unlock
     elif [[ ${MODE} == "exec" ]]; then
