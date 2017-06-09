@@ -44,7 +44,7 @@ KEEP_YEARLY=5
 
 # Optional arguments to the different borg commands.
 # The current default values are listed. Modify if needed.
-#BORG_BACKUP_ARGS=(
+#BORG_CREATE_ARGS=(
 #    --info
 #    --stats
 #    --list

@@ -42,8 +42,8 @@ borg_backup () {
         EXCLUDE_CMD+=( --exclude "${EXCLUDE}" )
     done
 
-    if [[ -z ${BORG_BACKUP_ARGS[@]} ]]; then
-        BORG_BACKUP_ARGS=(
+    if [[ -z ${BORG_CREATE_ARGS[@]} ]]; then
+        BORG_CREATE_ARGS=(
             --info
             --stats
             --list
@@ -53,11 +53,11 @@ borg_backup () {
     fi
 
     if ${DRY_RUN}; then
-        BORG_BACKUP_ARGS+=( --dry-run )
+        BORG_CREATE_ARGS+=( --dry-run )
     fi
 
     ${BORG} create \
-        "${BORG_BACKUP_ARGS[@]}" \
+        "${BORG_CREATE_ARGS[@]}" \
         "${BORG_REPO}"::"{hostname}-$(date -u +'%Y%m%dT%H%M%SZ')" \
         "${PATHS[@]}" \
         "${EXCLUDE_CMD[@]}"
