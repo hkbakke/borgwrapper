@@ -52,6 +52,9 @@ some restrictions so it looks something like this:
 ## Unlock after unclean exit
 
     borgwrapper unlock
+## Remove .checkpoints
+
+    borgwrapper delete-checkpoints
 ## Run other borg commands
 ### Wrapped and easy
 Use `exec <borg arguments>`. `BORG_REPO` is exported to the environment so use `::` when the repo
