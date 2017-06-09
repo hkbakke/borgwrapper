@@ -9,6 +9,8 @@ Usage: $(basename "${BASH_SOURCE[0]}") [OPTIONS] MODE
 
 OPTIONS
     -c CONFIG_FILE
+    -d
+        Run borg commands with dry-run where applicable
     -V
         Print version and exit.
 
@@ -50,6 +52,10 @@ borg_backup () {
         )
     fi
 
+    if ${DRY_RUN}; then
+        BORG_BACKUP_ARGS+=( --dry-run )
+    fi
+
     ${BORG} create \
         "${BORG_BACKUP_ARGS[@]}" \
         "${BORG_REPO}"::"{hostname}-$(date -u +'%Y%m%dT%H%M%SZ')" \
@@ -64,6 +70,10 @@ borg_prune () {
             --stats
             --list
         )
+    fi
+
+    if ${DRY_RUN}; then
+        BORG_PRUNE_ARGS+=( --dry-run )
     fi
 
     ${BORG} prune \
@@ -189,6 +199,7 @@ exit_clean () {
 
 # Default parameters
 CONFIG="/etc/borgwrapper/config.sh"
+DRY_RUN=false
 BORG="/usr/bin/borg"
 LOCKDIR="/run/lock/borgwrapper"
 PRE_BACKUP_CMD=()
@@ -196,10 +207,13 @@ POST_BACKUP_CMD=()
 POST_VERIFY_CMD=()
 BWLIMIT=0
 
-while getopts ":c:V" OPT; do
+while getopts ":c:dV" OPT; do
     case ${OPT} in
         c)
             CONFIG="${OPTARG}"
+            ;;
+        d)
+            DRY_RUN=true
             ;;
         V)
             print_version
