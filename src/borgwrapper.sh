@@ -9,6 +9,8 @@ Usage: $(basename "${BASH_SOURCE[0]}") [OPTIONS] MODE
 
 OPTIONS
     -c CONFIG_FILE
+    -V
+        Print version and exit.
 
 MODES
     init|backup|verify|unlock|delete-checkpoints|exec
