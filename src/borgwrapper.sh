@@ -1,5 +1,8 @@
 #!/bin/bash
 
+VERSION="1.0.0"
+
+
 print_usage () {
     cat << EOF
 Usage: $(basename "${BASH_SOURCE[0]}") [OPTIONS] MODE
@@ -10,6 +13,10 @@ OPTIONS
 MODES
     init|backup|verify|unlock|delete-checkpoints|exec
 EOF
+}
+
+print_version () {
+    echo "borgwrapper v${VERSION}"
 }
 
 error_handler () {
@@ -187,10 +194,14 @@ POST_BACKUP_CMD=()
 POST_VERIFY_CMD=()
 BWLIMIT=0
 
-while getopts ":c:" OPT; do
+while getopts ":c:V" OPT; do
     case ${OPT} in
         c)
             CONFIG="${OPTARG}"
+            ;;
+        V)
+            print_version
+            exit 0
             ;;
         *)
             print_usage
