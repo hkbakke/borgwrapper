@@ -15,7 +15,7 @@ OPTIONS
         Print version and exit.
 
 MODES
-    init|backup|verify|unlock|delete-checkpoints|exec
+    init|backup|verify|delete-checkpoints|exec
 EOF
 }
 
@@ -102,11 +102,6 @@ borg_delete_checkpoints () {
         | cut -d ' ' -f 1 \
         | xargs -I % -n 1 --no-run-if-empty \
         ${BORG} delete "${BORG_REPO}"::%
-}
-
-borg_unlock () {
-    # Use if borgbackup is not shut down cleanly and complains about lock files
-    ${BORG} break-lock "${BORG_REPO}"
 }
 
 borg_exec () {
@@ -262,8 +257,6 @@ mkdir -p "${LOCKDIR}"
         exit_verify 0
     elif [[ ${MODE} == "delete-checkpoints" ]]; then
         borg_delete_checkpoints
-    elif [[ ${MODE} == "unlock" ]]; then
-        borg_unlock
     elif [[ ${MODE} == "exec" ]]; then
         if [[ $# -le 1 ]]; then
             >&2 echo "ERROR: No borg arguments given"
