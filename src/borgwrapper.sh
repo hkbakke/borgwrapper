@@ -222,7 +222,7 @@ done
 
 # Interpret all remaining arguments as mode parameters
 shift "$((OPTIND - 1))"
-MODE="${1}"
+MODE="${@}"
 
 
 echo "Loading config from ${CONFIG}"
