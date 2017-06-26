@@ -222,7 +222,7 @@ done
 
 # Interpret all remaining arguments as mode parameters
 shift "$((OPTIND - 1))"
-MODE="${@}"
+MODE="${1}"
 
 
 echo "Loading config from ${CONFIG}"
@@ -242,6 +242,11 @@ mkdir -p "${LOCKDIR}"
 
     # Enforce bandwidth limit if set
     [[ -n ${BWLIMIT} ]] && [[ ${BWLIMIT} != "0" ]] && limit_bw
+
+    if [[ ${MODE} != "exec" ]] && [[ $# -gt 1 ]]; then
+        print_usage
+        exit 1
+    fi
 
     if [[ ${MODE} == "init" ]]; then
         borg_init
