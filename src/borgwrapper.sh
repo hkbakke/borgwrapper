@@ -109,6 +109,24 @@ borg_exec () {
     ${BORG} "$@"
 }
 
+write_backup_status () {
+    local NAME=$(basename "${CONFIG}" .sh)
+    local STATUSFILE="${STATUSDIR}/${NAME}.backup"
+    local STATUS="$1"
+
+    mkdir -p "${STATUSDIR}"
+    echo "$(date +'%s') ${STATUS}" > "${STATUSFILE}"
+}
+
+write_verify_status () {
+    local NAME=$(basename "${CONFIG}" .sh)
+    local STATUSFILE="${STATUSDIR}/${NAME}.verify"
+    local STATUS="$1"
+
+    mkdir -p "${STATUSDIR}"
+    echo "$(date +'%s') ${STATUS}" > "${STATUSFILE}"
+}
+
 convert_rate () {
     # Convert IN_RATE to bytes
     local IN_RATE=${1}
@@ -151,31 +169,23 @@ limit_bw () {
     echo "Limiting bandwith to ${RATE_LIMIT} bytes/s"
 }
 
-pre_backup_cmd () {
-    [[ -n ${PRE_BACKUP_CMD} ]] || return 0
-    echo "Running pre backup command: ${PRE_BACKUP_CMD[@]}"
-    "${PRE_BACKUP_CMD[@]}"
-}
-
-post_backup_cmd () {
-    [[ -n ${POST_BACKUP_CMD} ]] || return 0
-    echo "Running post backup command: ${POST_BACKUP_CMD[@]}"
-    "${POST_BACKUP_CMD[@]}"
-}
-
-post_verify_cmd () {
-    [[ -n ${POST_VERIFY_CMD} ]] || return 0
-    echo "Running post verify command: ${POST_VERIFY_CMD[@]}"
-    "${POST_VERIFY_CMD[@]}"
-}
-
 exit_backup () {
-    post_backup_cmd
+    if [[ $1 -eq 0 ]]; then
+        write_backup_status "OK"
+    else
+        write_backup_status "FAILED"
+    fi
+
     exit_clean $1
 }
 
 exit_verify () {
-    post_verify_cmd
+    if [[ $1 -eq 0 ]]; then
+        write_verify_status "OK"
+    else
+        write_verify_status "FAILED"
+    fi
+
     exit_clean $1
 }
 
@@ -197,6 +207,7 @@ CONFIG="/etc/borgwrapper/config.sh"
 DRY_RUN=false
 BORG="/usr/bin/borg"
 LOCKDIR="/run/lock/borgwrapper"
+STATUSDIR="/var/lib/borgwrapper/status"
 PRE_BACKUP_CMD=()
 POST_BACKUP_CMD=()
 POST_VERIFY_CMD=()
@@ -252,7 +263,6 @@ mkdir -p "${LOCKDIR}"
         borg_init
     elif [[ ${MODE} == "backup" ]]; then
         trap 'exit_backup $?' ERR INT TERM
-        pre_backup_cmd
         borg_backup
         borg_prune
         exit_backup 0

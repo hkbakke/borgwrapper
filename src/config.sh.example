@@ -30,17 +30,8 @@ KEEP_YEARLY=5
 # Location of borgwrapper lock files
 #LOCKDIR="/run/lock/borgwrapper"
 
-# Command to execute before backup, e.g., taking a ZFS snapshot. Must return successfully
-# for backup to start. POST_BACKUP_CMD is executed even if this fails.
-#PRE_BACKUP_CMD=()
-
-# Command to execute after backup, e.g., removing a snapshot or sending a report somewhere.
-# This command is executed regardless of backup success.
-#POST_BACKUP_CMD=()
-
-# Command to execute after verification.
-# This command is executed regardless of verification success.
-#POST_VERIFY_CMD=()
+# Location of borgwrapper status files for external monitoring
+#STATUSDIR="/var/lib/borgwrapper/status"
 
 # Optional arguments to the different borg commands.
 # The current default values are listed. Modify if needed.
