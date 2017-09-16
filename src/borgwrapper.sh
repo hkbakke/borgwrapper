@@ -208,9 +208,6 @@ DRY_RUN=false
 BORG="/usr/bin/borg"
 LOCKDIR="/run/lock/borgwrapper"
 STATUSDIR="/var/lib/borgwrapper/status"
-PRE_BACKUP_CMD=()
-POST_BACKUP_CMD=()
-POST_VERIFY_CMD=()
 BWLIMIT=0
 
 while getopts ":c:dV" OPT; do
