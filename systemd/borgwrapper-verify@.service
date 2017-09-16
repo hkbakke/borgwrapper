@@ -1,5 +1,5 @@
 [Unit]
-Description=Verify borgwrapper backup (config: %i)
+Description=borgwrapper backup verification (config: %i)
 After=network.target borgwrapper-backup@%i.service
 
 [Service]

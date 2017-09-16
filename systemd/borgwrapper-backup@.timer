@@ -1,5 +1,5 @@
 [Unit]
-Description=Start daily borgwrapper backup
+Description=daily borgwrapper backup timer
 
 [Timer]
 OnCalendar=daily

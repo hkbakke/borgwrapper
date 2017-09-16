@@ -1,5 +1,5 @@
 [Unit]
-Description=Run borgwrapper backup (config: %i)
+Description=borgwrapper backup (config: %i)
 After=network.target
 
 [Service]
