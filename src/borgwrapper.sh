@@ -52,10 +52,7 @@ borg_backup () {
         )
     fi
 
-    if ${DRY_RUN}; then
-        BORG_CREATE_ARGS+=( --dry-run )
-    fi
-
+    ${DRY_RUN} && BORG_CREATE_ARGS+=( --dry-run )
     ${NICE} ${BORG} create \
         "${BORG_CREATE_ARGS[@]}" \
         "${BORG_REPO}"::"{hostname}-$(date -u +'%Y%m%dT%H%M%SZ')" \
@@ -72,10 +69,7 @@ borg_prune () {
         )
     fi
 
-    if ${DRY_RUN}; then
-        BORG_PRUNE_ARGS+=( --dry-run )
-    fi
-
+    ${DRY_RUN} && BORG_PRUNE_ARGS+=( --dry-run )
     ${NICE} ${BORG} prune \
         "${BORG_PRUNE_ARGS[@]}" \
         --prefix "{hostname}-" \
@@ -99,10 +93,7 @@ borg_verify () {
 borg_delete_checkpoints () {
     local DELETE_ARGS=()
 
-    if ${DRY_RUN}; then
-        DELETE_ARGS+=( --dry-run )
-    fi
-
+    ${DRY_RUN} && DELETE_ARGS+=( --dry-run )
     ${BORG} list "${BORG_REPO}" \
         | { grep .checkpoint || true; } \
         | cut -d ' ' -f 1 \
@@ -244,10 +235,7 @@ MODE="${1}"
 echo "Loading config from ${CONFIG}"
 source "${CONFIG}" || exit 1
 export BORG_PASSPHRASE
-
-if ! ${USE_NICE}; then
-    NICE=""
-fi
+! ${USE_NICE} && NICE=""
 
 LOCKFILE="${LOCKDIR}/$(echo -n "${BORG_REPO}" | md5sum | cut -d ' ' -f 1).lock"
 mkdir -p "${LOCKDIR}"
