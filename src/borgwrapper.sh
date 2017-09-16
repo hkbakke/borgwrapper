@@ -207,7 +207,7 @@ LOCKDIR="/run/lock/borgwrapper"
 STATUSDIR="/var/lib/borgwrapper/status"
 BWLIMIT=0
 USE_NICE=true
-NICE="/usr/bin/nice"
+NICE="$(command -v nice)"
 
 while getopts ":c:dV" OPT; do
     case ${OPT} in

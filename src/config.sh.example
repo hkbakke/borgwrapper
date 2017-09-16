@@ -29,7 +29,6 @@ KEEP_YEARLY=5
 
 # Use nice to reduce system performance impact from backups. Set to false to disable.
 #USE_NICE=true
-#NICE="/usr/bin/nice"
 
 # Location of borgwrapper lock files
 #LOCKDIR="/run/lock/borgwrapper"
