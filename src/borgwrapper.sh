@@ -97,11 +97,17 @@ borg_verify () {
 }
 
 borg_delete_checkpoints () {
+    local DELETE_ARGS=()
+
+    if ${DRY_RUN}; then
+        DELETE_ARGS+=( --dry-run )
+    fi
+
     ${BORG} list "${BORG_REPO}" \
         | { grep .checkpoint || true; } \
         | cut -d ' ' -f 1 \
         | xargs -I % -n 1 --no-run-if-empty \
-        ${BORG} delete "${BORG_REPO}"::%
+        ${BORG} delete "${DELETE_ARGS[@]}" "${BORG_REPO}"::%
 }
 
 borg_exec () {
