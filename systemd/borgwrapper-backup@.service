@@ -1,0 +1,9 @@
+[Unit]
+Description=Run borgwrapper backup (config: %i)
+After=network.target
+
+[Service]
+Type=oneshot
+ExecStart=/usr/local/bin/borgwrapper -c /etc/borgwrapper/%i.sh backup
+User=root
+Group=root

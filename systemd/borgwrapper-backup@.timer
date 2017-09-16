@@ -1,0 +1,10 @@
+[Unit]
+Description=Start daily borgwrapper backup
+
+[Timer]
+OnCalendar=daily
+RandomizedDelaySec=6h
+Persistent=true
+
+[Install]
+WantedBy=multi-user.target

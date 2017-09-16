@@ -16,7 +16,29 @@ Ensure restrictive permissions on this file as it exposes the passphrase.
     chown root. config.sh
     chmod 600 config.sh
 
-Example cron jobs:
+# Scheduling
+## systemd
+Copy the example systemd [unit files](systemd/) to `/etc/systemd/system/`. Then for each
+configuration file in `/etc/borgwrapper/<config_name>.sh` do:
+
+    systemctl enable borgwrapper-backup@<config_name>.timer
+    systemctl enable borgwrapper-verify@<config_name>.timer
+
+    systemctl start borgwrapper-backup@<config_name>.timer
+    systemctl start borgwrapper-verify@<config_name>.timer
+
+You can view the backup logs with:
+
+    journalctl -xu borgwrapper-backup@<config_name>
+    journalctl -xu borgwrapper-verify@<config_name>
+
+If you want to run the tasks manually outside the timers you can just start them like usual
+services:
+
+    systemctl start borgwrapper-backup@<config_name>
+    systemctl start borgwrapper-verify@<config_name>
+
+## Cron (use only if systemd is not available)
 
     # Run the backup daily
     23 1 * * * /usr/local/bin/borgwrapper backup
