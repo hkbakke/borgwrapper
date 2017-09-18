@@ -106,24 +106,6 @@ borg_exec () {
     ${NICE} ${BORG} "$@"
 }
 
-write_backup_status () {
-    local NAME=$(basename "${CONFIG}" .sh)
-    local STATUSFILE="${STATUSDIR}/${NAME}.backup"
-    local STATUS="$1"
-
-    mkdir -p "${STATUSDIR}"
-    echo "$(date +'%s') ${STATUS}" > "${STATUSFILE}"
-}
-
-write_verify_status () {
-    local NAME=$(basename "${CONFIG}" .sh)
-    local STATUSFILE="${STATUSDIR}/${NAME}.verify"
-    local STATUS="$1"
-
-    mkdir -p "${STATUSDIR}"
-    echo "$(date +'%s') ${STATUS}" > "${STATUSFILE}"
-}
-
 convert_rate () {
     # Convert IN_RATE to bytes
     local IN_RATE=${1}
@@ -167,22 +149,10 @@ limit_bw () {
 }
 
 exit_backup () {
-    if [[ $1 -eq 0 ]]; then
-        write_backup_status "OK"
-    else
-        write_backup_status "FAILED"
-    fi
-
     exit_clean $1
 }
 
 exit_verify () {
-    if [[ $1 -eq 0 ]]; then
-        write_verify_status "OK"
-    else
-        write_verify_status "FAILED"
-    fi
-
     exit_clean $1
 }
 
@@ -204,7 +174,6 @@ CONFIG="/etc/borgwrapper/config.sh"
 DRY_RUN=false
 BORG="/usr/bin/borg"
 LOCKDIR="/run/lock/borgwrapper"
-STATUSDIR="/var/lib/borgwrapper/status"
 BWLIMIT=0
 USE_NICE=true
 NICE="$(command -v nice)"
