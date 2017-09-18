@@ -33,9 +33,6 @@ KEEP_YEARLY=5
 # Location of borgwrapper lock files
 #LOCKDIR="/run/lock/borgwrapper"
 
-# Location of borgwrapper status files for external monitoring
-#STATUSDIR="/var/lib/borgwrapper/status"
-
 # Optional arguments to the different borg commands.
 # The current default values are listed. Modify if needed.
 #BORG_CREATE_ARGS=(
