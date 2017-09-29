@@ -27,9 +27,6 @@ KEEP_YEARLY=5
 # You can use K, M, G or T binary prefixes (power of 1024), e.g., 5M = 5MiB/s = 5242880 bytes/s.
 #BWLIMIT=0
 
-# Use nice to reduce system performance impact from backups. Set to false to disable.
-#USE_NICE=true
-
 # Location of borgwrapper lock files
 #LOCKDIR="/run/lock/borgwrapper"
 

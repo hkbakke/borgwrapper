@@ -53,7 +53,7 @@ borg_backup () {
     fi
 
     ${DRY_RUN} && BORG_CREATE_ARGS+=( --dry-run )
-    ${NICE} ${BORG} create \
+    ${BORG} create \
         "${BORG_CREATE_ARGS[@]}" \
         "${BORG_REPO}"::"{hostname}-$(date -u +'%Y%m%dT%H%M%SZ')" \
         "${PATHS[@]}" \
@@ -70,7 +70,7 @@ borg_prune () {
     fi
 
     ${DRY_RUN} && BORG_PRUNE_ARGS+=( --dry-run )
-    ${NICE} ${BORG} prune \
+    ${BORG} prune \
         "${BORG_PRUNE_ARGS[@]}" \
         --prefix "{hostname}-" \
         --keep-daily=${KEEP_DAILY} \
@@ -87,7 +87,7 @@ borg_verify () {
         )
     fi
 
-    ${NICE} ${BORG} check "${BORG_CHECK_ARGS[@]}" "${BORG_REPO}"
+    ${BORG} check "${BORG_CHECK_ARGS[@]}" "${BORG_REPO}"
 }
 
 borg_delete_checkpoints () {
@@ -103,7 +103,7 @@ borg_delete_checkpoints () {
 
 borg_exec () {
     export BORG_REPO
-    ${NICE} ${BORG} "$@"
+    ${BORG} "$@"
 }
 
 convert_rate () {
@@ -175,8 +175,6 @@ DRY_RUN=false
 BORG="/usr/bin/borg"
 LOCKDIR="/run/lock/borgwrapper"
 BWLIMIT=0
-USE_NICE=true
-NICE="$(command -v nice)"
 
 while getopts ":c:dV" OPT; do
     case ${OPT} in
@@ -204,7 +202,6 @@ MODE="${1}"
 echo "Loading config from ${CONFIG}"
 source "${CONFIG}" || exit 1
 export BORG_PASSPHRASE
-! ${USE_NICE} && NICE=""
 
 LOCKFILE="${LOCKDIR}/$(echo -n "${BORG_REPO}" | md5sum | cut -d ' ' -f 1).lock"
 mkdir -p "${LOCKDIR}"
