@@ -1,11 +1,11 @@
 #!/bin/bash
 
-VERSION="1.3.0"
+VERSION="1.4.0"
 
 
 print_usage () {
     cat << EOF
-Usage: $(basename "${BASH_SOURCE[0]}") [OPTIONS] MODE
+Usage: borgwrapper [OPTIONS] MODE
 
 OPTIONS
     -c CONFIG_FILE
@@ -170,7 +170,7 @@ exit_clean () {
 
 
 # Default parameters
-CONFIG="/etc/borgwrapper/config.sh"
+CONFIG="/etc/borgwrapper/config"
 DRY_RUN=false
 BORG="/usr/bin/borg"
 LOCKDIR="/run/lock/borgwrapper"

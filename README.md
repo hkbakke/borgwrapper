@@ -2,24 +2,24 @@
 Wrapper to simplify backups with borgbackup
 
 # Installation
-Put the [script](src/borgwrapper.sh) somewhere practical
+Put the [script](src/borgwrapper) somewhere practical
 
-    cp borgwrapper.sh /usr/local/bin/borgwrapper
+    cp borgwrapper /usr/local/bin/borgwrapper
     chown root. /usr/local/bin/borgwrapper
     chmod 750 /usr/local/bin/borgwrapper
 
 # Configuration
-By default borgwrapper expects the configuration to be located at `/etc/borgwrapper/config.sh`.
-An example configuration file is included in [config.sh.example](src/config.sh.example).
+By default borgwrapper expects the configuration to be located at `/etc/borgwrapper/config`.
+An example configuration file is included in [config.example](src/config.example).
 Ensure restrictive permissions on this file as it exposes the passphrase.
 
-    chown root. config.sh
-    chmod 600 config.sh
+    chown root. config
+    chmod 600 config
 
 # Scheduling
 ## systemd
 Copy the example systemd [unit files](systemd/) to `/etc/systemd/system/`. Then for each
-configuration file in `/etc/borgwrapper/<config_name>.sh` do:
+configuration file in `/etc/borgwrapper/<config_name>` do:
 
     systemctl enable borgwrapper-backup@<config_name>.timer
     systemctl enable borgwrapper-verify@<config_name>.timer
@@ -89,5 +89,5 @@ Run in subshell if you do not want the passphrase stored in the current shell af
 
 Examples:
 
-    (. /etc/borgwrapper/config.sh; export BORG_PASSPHRASE; borg mount "$BORG_REPO" /mnt)
-    (. /etc/borgwrapper/config.sh; export BORG_PASSPHRASE; borg list "$BORG_REPO")
+    (. /etc/borgwrapper/config; export BORG_PASSPHRASE; borg mount "$BORG_REPO" /mnt)
+    (. /etc/borgwrapper/config; export BORG_PASSPHRASE; borg list "$BORG_REPO")
