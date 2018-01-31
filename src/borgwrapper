@@ -201,9 +201,10 @@ MODE="${1}"
 
 echo "Loading config from ${CONFIG}"
 source "${CONFIG}" || exit 1
+
+# Set some defaults
 [[ -n ${BORG_RSH} ]] || BORG_RSH="ssh"
-export BORG_PASSPHRASE
-export BORG_RSH
+[[ -n ${BWLIMIT} ]] || BWLIMIT="0"
 
 LOCKFILE="${LOCKDIR}/$(echo -n "${BORG_REPO}" | md5sum | cut -d ' ' -f 1).lock"
 mkdir -p "${LOCKDIR}"
@@ -216,8 +217,12 @@ mkdir -p "${LOCKDIR}"
     trap 'error_handler ${LINENO} $?' ERR INT TERM
     set -o errtrace -o pipefail
 
+    # These are needed everywhere
+    export BORG_PASSPHRASE
+    export BORG_RSH
+
     # Enforce bandwidth limit if set
-    [[ -n ${BWLIMIT} ]] && [[ ${BWLIMIT} != "0" ]] && limit_bw
+    [[ ${BWLIMIT} != "0" ]] && limit_bw
 
     if [[ ${MODE} != "exec" ]] && [[ $# -gt 1 ]]; then
         print_usage
