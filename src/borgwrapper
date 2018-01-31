@@ -144,7 +144,7 @@ limit_bw () {
     export RATE_LIMIT=$(convert_rate ${BWLIMIT})
     chmod +x ${PV_WRAPPER}
     echo -e '#!/bin/bash\npv -q -L ${RATE_LIMIT} | "$@"' > ${PV_WRAPPER}
-    export BORG_RSH="${PV_WRAPPER} ssh"
+    export BORG_RSH="${PV_WRAPPER} ${BORG_RSH}"
     echo "Limiting bandwith to ${RATE_LIMIT} bytes/s"
 }
 
@@ -201,7 +201,9 @@ MODE="${1}"
 
 echo "Loading config from ${CONFIG}"
 source "${CONFIG}" || exit 1
+[[ -n ${BORG_RSH} ]] || BORG_RSH="ssh"
 export BORG_PASSPHRASE
+export BORG_RSH
 
 LOCKFILE="${LOCKDIR}/$(echo -n "${BORG_REPO}" | md5sum | cut -d ' ' -f 1).lock"
 mkdir -p "${LOCKDIR}"
