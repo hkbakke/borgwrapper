@@ -71,10 +71,6 @@ some restrictions so it looks something like this:
 ## Verify backups
 
     borgwrapper verify
-## Remove checkpoints
-Verify that you have at least one recent complete backup before doing this!
-
-    borgwrapper delete-checkpoints
 ## Run other borg commands
 ### Wrapped and easy
 Use `exec <borg arguments>`. `BORG_REPO` is exported to the environment so use `::` when the repo

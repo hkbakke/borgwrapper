@@ -15,7 +15,7 @@ OPTIONS
         Print version and exit.
 
 MODES
-    init|backup|verify|delete-checkpoints|exec
+    init|backup|verify|exec
 EOF
 }
 
@@ -88,17 +88,6 @@ borg_verify () {
     fi
 
     ${BORG} check "${BORG_CHECK_ARGS[@]}" "${BORG_REPO}"
-}
-
-borg_delete_checkpoints () {
-    local DELETE_ARGS=()
-
-    ${DRY_RUN} && DELETE_ARGS+=( --dry-run )
-    ${BORG} list "${BORG_REPO}" \
-        | { grep .checkpoint || true; } \
-        | cut -d ' ' -f 1 \
-        | xargs -I % -n 1 --no-run-if-empty \
-        ${BORG} delete "${DELETE_ARGS[@]}" "${BORG_REPO}"::%
 }
 
 borg_exec () {
@@ -240,8 +229,6 @@ mkdir -p "${LOCKDIR}"
         trap 'exit_verify $?' ERR INT TERM
         borg_verify
         exit_verify 0
-    elif [[ ${MODE} == "delete-checkpoints" ]]; then
-        borg_delete_checkpoints
     elif [[ ${MODE} == "exec" ]]; then
         if [[ $# -le 1 ]]; then
             >&2 echo "ERROR: No borg arguments given"
