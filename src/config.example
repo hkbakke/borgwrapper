@@ -50,3 +50,6 @@ KEEP_YEARLY=5
 #BORG_CHECK_ARGS=(
 #    --info
 #)
+#BORG_INIT_ARGS=(
+#   --encryption repokey-blake2
+#)

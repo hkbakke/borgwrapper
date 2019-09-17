@@ -32,7 +32,12 @@ error_handler () {
 }
 
 borg_init () {
-    ${BORG} init "${BORG_REPO}"
+    if [[ -z ${BORG_INIT_ARGS[@]} ]]; then
+        BORG_INIT_ARGS=(
+            --encryption repokey-blake2
+        )
+    fi
+    ${BORG} init "${BORG_INIT_ARGS[@]}" "${BORG_REPO}"
 }
 
 borg_backup () {
