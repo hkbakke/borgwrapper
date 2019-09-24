@@ -1,6 +1,6 @@
 #!/bin/bash
 
-VERSION="1.5.1"
+VERSION="1.5.2"
 
 
 print_usage () {
@@ -50,14 +50,18 @@ borg_backup () {
     if [[ -z ${BORG_CREATE_ARGS[@]} ]]; then
         BORG_CREATE_ARGS=(
             --info
-            --stats
             --list
             --filter AME
             --compression lz4
         )
     fi
 
-    ${DRY_RUN} && BORG_CREATE_ARGS+=( --dry-run )
+    if ${DRY_RUN}; then
+        BORG_CREATE_ARGS+=( --dry-run )
+    else
+        BORG_CREATE_ARGS+=( --stats )
+    fi
+
     ${BORG} create \
         "${BORG_CREATE_ARGS[@]}" \
         "${BORG_REPO}"::"{hostname}-$(date -u +'%Y%m%dT%H%M%SZ')" \
@@ -69,12 +73,16 @@ borg_prune () {
     if [[ -z ${BORG_PRUNE_ARGS[@]} ]]; then
         BORG_PRUNE_ARGS=(
             --info
-            --stats
             --list
         )
     fi
 
-    ${DRY_RUN} && BORG_PRUNE_ARGS+=( --dry-run )
+    if ${DRY_RUN}; then
+        BORG_PRUNE_ARGS+=( --dry-run )
+    else
+        BORG_PRUNE_ARGS+=( --stats )
+    fi
+
     ${BORG} prune \
         "${BORG_PRUNE_ARGS[@]}" \
         --prefix "{hostname}-" \
