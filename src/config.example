@@ -17,6 +17,7 @@ EXCLUDES=(
     "/root/.cache"
     "*.pyc"
 )
+KEEP_HOURLY=0
 KEEP_DAILY=31
 KEEP_WEEKLY=0
 KEEP_MONTHLY=24
