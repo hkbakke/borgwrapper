@@ -32,19 +32,19 @@ take backups more often than that you can either change the `Timer` parameters
 directly in the systemd timer files, or if you only want to override them for
 some of the backups you can add per-config overrides by using
 
-   systemctl edit borgwrapper-backup@<config>
+    systemctl edit borgwrapper-backup@<config>
 
 and add the wanted overrides. Here is an example where you run a backup 4 times
 a day (every 6 hours). See the manual for systemd.timer for more information on
 the `OnCalendar` format.
 
-   [Timer]
-   OnCalendar=00/6:00
-   RandomizedDelaySec=0
+    [Timer]
+    OnCalendar=00/6:00
+    RandomizedDelaySec=0
 
 The output will land in
 
-   /etc/systemd/system/borgwrapper-backup@<config>.timer.d/override.conf
+    /etc/systemd/system/borgwrapper-backup@<config>.timer.d/override.conf
 
 You can just drop files in the directory directly too, without editing via
 systemctl. This is better suited for configuration management systems.
