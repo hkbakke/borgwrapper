@@ -86,10 +86,11 @@ borg_prune () {
     ${BORG} prune \
         "${BORG_PRUNE_ARGS[@]}" \
         --prefix "{hostname}-" \
-        --keep-daily=${KEEP_DAILY} \
-        --keep-weekly=${KEEP_WEEKLY} \
-        --keep-monthly=${KEEP_MONTHLY} \
-        --keep-yearly=${KEEP_YEARLY} \
+        --keep-hourly=${KEEP_HOURLY:-0} \
+        --keep-daily=${KEEP_DAILY:-0} \
+        --keep-weekly=${KEEP_WEEKLY:-0} \
+        --keep-monthly=${KEEP_MONTHLY:-0} \
+        --keep-yearly=${KEEP_YEARLY:-0} \
         "${BORG_REPO}"
 }
 
